@@ -1,0 +1,35 @@
+\section{Experimentos}
+En esta sección se detalla la infraestructura experimental, el procesamiento de las imágenes, la calibración de los hiperparámetros de entrenamiento y la configuración del estudio de ablación.
+
+\subsection{Conjunto de Datos y Preprocesamiento}
+El conjunto de datos de textura de neumáticos contiene dos divisiones principales para entrenamiento y validación independiente:
+\begin{itemize}
+    \item \textbf{training\_data}: Utilizado para el ajuste de los pesos de la red convolucional. Las muestras son equilibradas dinámicamente mediante el muestreo ponderado.
+    \item \textbf{testing\_data}: Utilizado para la evaluación del desempeño general del modelo sin realizar aumentación de datos ni balanceo de lotes.
+\end{itemize}
+
+El procesamiento de las imágenes de entrada se estructuró a través del pipeline \texttt{torchvision.transforms}:
+\begin{enumerate}
+    \item \textbf{Redimensionamiento:} Todas las imágenes se reescalaron a una dimensión fija de $224 \times 224$ píxeles. Esto permite estandarizar las dimensiones espaciales para que sean compatibles con el extractor convolucional de la arquitectura ResNet-50.
+    \item \textbf{Aumentación Estocástica:} Para mejorar la generalización textural y la robustez del modelo ante diferentes ángulos de inspección física, se aplicó un volteo horizontal aleatorio (\texttt{RandomHorizontalFlip}) en las imágenes de entrenamiento.
+    \item \textbf{Normalización Z-score:} Se normalizaron los canales R, G y B utilizando los valores de media y desviación estándar precalculados sobre el conjunto global ImageNet:
+    \[
+    \mu_{RGB} = [0.485, 0.456, 0.406], \quad \sigma_{RGB} = [0.229, 0.224, 0.225]
+    \]
+\end{enumerate}
+
+\subsection{Configuración de Hiperparámetros}
+Los entrenamientos se realizaron en un entorno con soporte de GPU Nvidia CUDA. La configuración detallada de los hiperparámetros experimentales incluye:
+\begin{itemize}
+    \item \textbf{Optimizador:} Se utilizó el optimizador Adam por su capacidad de adaptar las tasas de aprendizaje para cada parámetro basándose en estimaciones de momentos de primer y segundo orden.
+    \item \textbf{Tamaño del lote (Batch Size):} Establecido en 32 imágenes para equilibrar la estabilidad de la estimación del gradiente con las restricciones de memoria de GPU.
+    \item \textbf{Épocas de Entrenamiento:} El modelo básico \texttt{CustomCNN} fue entrenado durante 10 épocas, mientras que el modelo \texttt{ResNet-50} fue entrenado durante 5 épocas de ajuste fino (fine-tuning) sobre el clasificador final debido a su rápida convergencia.
+    \item \textbf{Comparación de Tasas de Aprendizaje:} Se evaluó la estabilidad y velocidad de convergencia de la arquitectura \texttt{ResNet-50} sintonizando con dos valores de learning rate diferentes: $1 \times 10^{-4}$ y $5 \times 10^{-5}$ durante un intervalo rápido de 3 épocas.
+\end{itemize}
+
+\subsection{Configuración del Estudio de Ablación}
+El estudio de ablación se diseñó para medir de forma aislada el impacto de dos factores clave sobre el rendimiento del clasificador:
+\begin{enumerate}
+    \item \textbf{Arquitectura del Extractor de Características:} Comparando una arquitectura convolucional simple diseñada desde cero (\texttt{CustomCNN}) contra una arquitectura profunda y compleja basada en aprendizaje por transferencia (\texttt{ResNet-50}).
+    \item \textbf{Estabilidad del Optimizador frente a Tasas de Aprendizaje:} Evaluando si el modelo de transferencia es sensible o robusto frente al rango de tasas de aprendizaje adaptativo seleccionadas.
+\end{enumerate}

@@ -1,0 +1,104 @@
+\documentclass{article}
+
+% Empleamos la plantilla oficial de NeurIPS 2020 en formato preprint para el reporte
+\usepackage[preprint]{neurips_2020}
+
+\usepackage[utf8]{inputenc} % Permitir caracteres UTF-8
+\usepackage[T1]{fontenc}    % Codificación de fuentes
+\usepackage[spanish,es-tabla]{babel} % Soporte para español e internacionalización de tablas
+\usepackage{hyperref}       % Hipervínculos
+\usepackage{url}            % Formateo de URLs
+\usepackage{booktabs}       % Tablas de calidad profesional
+\usepackage{amsfonts}       % Fuentes matemáticas de la AMS
+\usepackage{nicefrac}       % Fracciones compactas
+\usepackage{microtype}      % Mejoras en la microtipografía
+\usepackage{xcolor}         % Colores para código/hipervínculos
+\usepackage{amsmath}        % Ecuaciones avanzadas de la AMS
+\usepackage{graphicx}       % Inserción de imágenes
+\usepackage{subcaption}     % Subfiguras
+\usepackage{listings}       % Listados de código fuente
+
+% Configuración de hipervínculos
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+    pdftitle={Clasificación de Defectos en la Textura de Neumáticos},
+    pdfpagemode=FullScreen,
+}
+
+% Configuración para listados de código
+\lstset{
+    language=Python,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue},
+    stringstyle=\color{red},
+    commentstyle=\color{green!60!black},
+    breaklines=true,
+    frame=single,
+    captionpos=b
+}
+
+\title{Clasificación de Defectos en la Textura de Neumáticos Mediante Redes Neuronales Convolucionales y Transfer Learning: Un Estudio de Ablación con Focal Loss}
+
+\author{%
+  Víctor Lazo \\
+  Departamento de Inteligencia Artificial \\
+  Universidad de Ingeniería \\
+  \texttt{vlazop@example.com} \\
+}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Este informe presenta el diseño, implementación y evaluación de un sistema de visión artificial basado en Deep Learning para clasificar texturas de neumáticos en dos categorías: sano y dañado. Con el fin de mitigar el desbalance de clases severo inherente al conjunto de datos original, se implementaron técnicas complementarias a nivel de datos (mediante \texttt{WeightedRandomSampler}) y a nivel de función de costo (mediante \texttt{Focal Loss}). Se llevó a cabo un estudio de ablación comparando una red neuronal convolucional personalizada diseñada desde cero (\texttt{CustomCNN}) y un modelo preentrenado de gran escala (\texttt{ResNet-50}) mediante Transfer Learning. Los resultados experimentales confirman la superioridad indiscutible de \texttt{ResNet-50}, la cual alcanzó una exactitud del 72.00\% y un área bajo la curva ROC (AUC-ROC) de 0.8358, superando al modelo básico en más de 18 puntos porcentuales de precisión. Adicionalmente, se integró el método de interpretabilidad visual Grad-CAM para validar las zonas de activación de la red convolucional y un análisis cualitativo de los principales modos de fallo del sistema para proponer futuras líneas de desarrollo.
+\end{abstract}
+
+% Integración de las secciones del informe desde archivos tex individuales
+\input{motivacion}
+\input{trabajos_relacionados}
+\input{metodologia}
+\input{experimentos}
+\input{resultados}
+\input{limitaciones}
+
+% Referencias bibliográficas
+\bibliographystyle{plainnat}
+\begin{thebibliography}{5}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[He et al.(2016)He, Zhang, Ren, and Sun]{he2016deep}
+Kaiming He, Xiangyu Zhang, Shaoqing Ren, and Jian Sun.
+\newblock Deep residual learning for image recognition.
+\newblock In \emph{Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition}, pages 770--778, 2016.
+
+\bibitem[Krizhevsky et al.(2012)Krizhevsky, Sutskever, and Hinton]{krizhevsky2012imagenet}
+Alex Krizhevsky, Ilya Sutskever, and Geoffrey~E. Hinton.
+\newblock Imagenet classification with deep convolutional neural networks.
+\newblock In \emph{Advances in Neural Information Processing Systems}, volume~25, pages 1097--1105, 2012.
+
+\bibitem[Lin et al.(2017)Lin, Goyal, Girshick, He, and Doll{\'a}r]{lin2017focal}
+Tsung-Yi Lin, Priya Goyal, Ross Girshick, Kaiming He, and Piotr Doll{\'a}r.
+\newblock Focal loss for dense object detection.
+\newblock In \emph{Proceedings of the IEEE International Conference on Computer Vision}, pages 2980--2988, 2017.
+
+\bibitem[Selvaraju et al.(2017)Selvaraju, Cogswell, Das, Vedantam, Parikh, and Batra]{selvaraju2017grad}
+Ramprasaath~R. Selvaraju, Michael Cogswell, Abhishek Das, Ramakrishna Vedantam, Devi Parikh, and Dhruv Batra.
+\newblock Grad-cam: Visual explanations from deep networks via gradient-based localization.
+\newblock In \emph{Proceedings of the IEEE International Conference on Computer Vision}, pages 618--626, 2017.
+
+\bibitem[Simonyan and Zisserman(2014)] {simonyan2014very}
+Karen Simonyan and Andrew Zisserman.
+\newblock Very deep convolutional networks for large-scale image recognition.
+\newblock \emph{arXiv preprint arXiv:1409.1556}, 2014.
+
+\end{thebibliography}
+
+\end{document}

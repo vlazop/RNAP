@@ -1,0 +1,65 @@
+\section{Metodología}
+La solución propuesta aborda el problema de clasificación binaria mediante una combinación integrada de preprocesamiento, muestreo ponderado adaptativo para el desbalance de clases, arquitecturas convolucionales y sintonización de hiperparámetros.
+
+\subsection{Estrategia de Mitigación de Desbalance en Datos}
+Para combatir la disparidad original en la cantidad de muestras entre neumáticos sanos (mayoritaria) y dañados (minoritaria), se implementó la técnica de muestreo ponderado mediante el cargador de datos utilizando \texttt{WeightedRandomSampler}.
+
+Matemáticamente, definimos la probabilidad de muestreo individual para cada imagen. Sea $N$ el número total de muestras en el conjunto de entrenamiento, y $C$ el número de clases ($C=2$). Sea $N_c$ la cantidad de imágenes pertenecientes a la clase $c \in \{0, 1\}$. El peso asignado a cada clase $c$, denotado como $w_c$, se calcula como la inversa de su frecuencia absoluta:
+\begin{equation}
+w_c = \frac{1}{N_c}
+\end{equation}
+
+Para cada muestra individual $i$ en el conjunto de datos con etiqueta correspondiente $y_i \in \{0, 1\}$, se calcula su peso de muestreo $W_i$:
+\begin{equation}
+W_i = w_{y_i}
+\end{equation}
+
+El \texttt{WeightedRandomSampler} utiliza el vector de pesos $\mathbf{W} = [W_1, W_2, \dots, W_N]$ para realizar un muestreo con reemplazo en cada mini-lote, logrando que la probabilidad de seleccionar muestras de la clase minoritaria aumente proporcionalmente, lo que estabiliza el entrenamiento al presentar lotes balanceados en promedio al 50\% por clase.
+
+\subsection{Arquitecturas Convolucionales Empleadas}
+
+\subsubsection{Custom CNN (Entrenada desde Cero)}
+Como modelo base de referencia, se diseñó una red convolucional compacta (\texttt{CustomCNN}). Consta de tres bloques extractores y un clasificador lineal:
+\begin{itemize}
+    \item \textbf{Bloques Convolucionales:} Cada bloque está compuesto por una capa de convolución bidimensional (\texttt{Conv2d}) con un kernel de $3 \times 3$, paso de 1 y relleno de 1, seguida de una activación lineal rectificada (\texttt{ReLU}) y una reducción dimensional espacial por agrupación máxima (\texttt{MaxPool2d}) con filtro de $2 \times 2$ y paso de 2. La progresión de canales es de $3 \to 32 \to 64 \to 128$.
+    \item \textbf{Clasificador Lineal:} La salida final del extractor convolucional ($128 \times 28 \times 28$) se aplana en un vector unidimensional de $100,352$ elementos. Este vector alimenta a una capa lineal de $100,352 \times 128$ nodos con activación \texttt{ReLU}, una capa de regularización \texttt{Dropout} con tasa de descarte de 0.50 y, finalmente, una capa lineal de salida de $128 \times 1$ que produce el logit real de clasificación.
+\end{itemize}
+
+\subsubsection{ResNet-50 (Transfer Learning)}
+Para aprovechar el conocimiento de grandes conjuntos de datos de visión, se empleó la arquitectura profunda \texttt{ResNet-50} inicializada con los pesos preentrenados de ImageNet (\texttt{ResNet50\_Weights.IMAGENET1K\_V1}).
+
+Para adaptarla a la clasificación binaria de texturas de neumáticos:
+\begin{enumerate}
+    \item Se congelaron todos los pesos base del extractor residual configurando sus gradientes como no requeridos (\texttt{requires\_grad = False}). Esto preserva los filtros genéricos de texturas y formas complejas.
+    \item Se eliminó la capa final de clasificación multiclase de 1000 nodos y se reemplazó por un clasificador secuencial de dos capas lineales:
+    \begin{equation}
+    \text{Salida} = \mathbf{W}_2 \cdot \text{ReLU}(\text{Dropout}_{0.3}(\mathbf{W}_1 \cdot \mathbf{x} + \mathbf{b}_1)) + b_2
+    \end{equation}
+    Donde $\mathbf{x} \in \mathbb{R}^{2048}$ es el vector del extractor residual de características, $\mathbf{W}_1 \in \mathbb{R}^{256 \times 2048}$ y $\mathbf{b}_1 \in \mathbb{R}^{256}$ definen la primera proyección lineal de dimensiones reducidas, y $\mathbf{W}_2 \in \mathbb{R}^{1 \times 256}$ junto a $b_2 \in \mathbb{R}$ definen el logit terminal de clasificación. El dropout de 0.30 actúa como regularizador para prevenir el sobreajuste.
+\end{enumerate}
+
+\subsection{Funciones de Pérdida Comparadas}
+
+\subsubsection{Entropía Cruzada Binaria (BCE)}
+La pérdida de entropía cruzada estándar con logits (BCEWithLogitsLoss) calcula la pérdida basándose en el logit de salida $x_i$ y la etiqueta real $y_i \in \{0, 1\}$ mediante la expresión:
+\begin{equation}
+L_{BCE}(x_i, y_i) = - [y_i \cdot \log(\sigma(x_i)) + (1 - y_i) \cdot \log(1 - \sigma(x_i))]
+\end{equation}
+Donde $\sigma(x_i) = 1 / (1 + e^{-x_i})$ es la función sigmoide que normaliza la salida del modelo a un rango de probabilidad.
+
+\subsubsection{Focal Loss}
+Para priorizar el aprendizaje del gradiente sobre los casos difíciles (por ejemplo, texturas con cortes muy sutiles o ambiguos) y minimizar la influencia de muestras triviales de la clase mayoritaria, se implementó \textit{Focal Loss}.
+
+Definiendo la probabilidad asociada a la etiqueta correcta $p_t$ como:
+\begin{equation}
+p_t = \begin{cases} 
+      \sigma(x_i) & \text{si } y_i = 1 \\
+      1 - \sigma(x_i) & \text{si } y_i = 0 
+   \end{cases}
+\end{equation}
+
+La función de pérdida Focal Loss se calcula como:
+\begin{equation}
+FL(p_t) = -\alpha_t (1 - p_t)^\gamma \log(p_t)
+\end{equation}
+Donde se adoptaron los parámetros estándar del estado del arte: un factor de focalización $\gamma = 2$ para penalizar los errores en ejemplos difíciles y un peso de clase $\alpha_t = 1$ para mantener el balance global de la pérdida.
