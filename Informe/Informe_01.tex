@@ -1,7 +1,10 @@
 \documentclass{article}
+% \usepackage{hyphenat}
+
 
 % Empleamos la plantilla oficial de NeurIPS 2026 en formato preprint para el reporte
 \usepackage[preprint]{neurips_2026}
+% \usepackage{neurips_2026}
 
 \usepackage[utf8]{inputenc} % Permitir caracteres UTF-8
 \usepackage[T1]{fontenc}    % Codificación de fuentes
@@ -42,28 +45,85 @@
 
 \title{Clasificación de Defectos en la Textura de Neumáticos Mediante Redes Neuronales Convolucionales y Transfer Learning: Un Estudio de Ablación con Focal Loss}
 
+% \author{%
+%   Víctor Lazo \\
+%   Departamento de Inteligencia Artificial \\
+%   Universidad de Ingeniería \\
+%   \texttt{vlazop@example.com} \\
+% }
+
 \author{%
-  Víctor Lazo \\
-  Departamento de Inteligencia Artificial \\
-  Universidad de Ingeniería \\
-  \texttt{vlazop@example.com} \\
+  \textbf{Andres Flores} \\
+  Unidad de Posgrado - FIIS \\
+  Universidad Nacional de Ingeniería \\
+  \texttt{affloresb@uni.pe} \\
+  \and
+  \textbf{Victor Lazo} \\
+  Unidad de Posgrado - FIIS \\
+  Universidad Nacional de Ingeniería \\
+  \texttt{vlazop@uni.pe} \\
+  \AND % Resetea la línea horizontal para los siguientes dos autores
+  \textbf{Rubén López} \\
+  Unidad de Posgrado - FIIS \\
+  Universidad Nacional de Ingeniería \\
+  \texttt{ruben.lopez.m@uni.pe} \\
+  \and
+ \textbf{Juan Quispe} \\
+ Unidad de Posgrado - FIIS \\
+  Universidad Nacional de Ingeniería \\
+  \texttt{juan.quispe.h@uni.pe}
 }
 
 \begin{document}
 
 \maketitle
+%%%%%% PARA LOS ENTREGABLES por pregunta %%%%%
+%%  Para la Pregunta 1: Clasificación de Llantas (CNN)%%
+%  -   En Metodología: Describe la arquitectura CNN diseñada desde cero y el backbone                       preentrenado (transfer learning).  
+%  -   En Experimentos: Documenta el estudio de ablación (evaluando aumento de datos, tasa de aprendizaje, funciones de pérdida, etc.). Explica la estrategia para mitigar el desbalance de clases (sobremuestreo, pesos, etc.).  
+%  -   En Resultados: Reporta las métricas: exactitud, precisión, recall, F1-score y AUC-ROC.
+%       ** Incluye la matriz de confusión comentada.  
+%       ** Muestra los mapas de activación (Grad-CAM) para explicar qué patrones indican                        daño.  
+%       ** En el análisis cualitativo de fallos, identifica al menos 5 ejemplos mal clasificados con sus hipótesis.  
 
-\begin{abstract}
-Este informe presenta el diseño, implementación y evaluación de un sistema de visión artificial basado en Deep Learning para clasificar texturas de neumáticos en dos categorías: sano y dañado. Con el fin de mitigar el desbalance de clases severo inherente al conjunto de datos original, se implementaron técnicas complementarias a nivel de datos (mediante \texttt{WeightedRandomSampler}) y a nivel de función de costo (mediante \texttt{Focal Loss}). Se llevó a cabo un estudio de ablación comparando una red neuronal convolucional personalizada diseñada desde cero (\texttt{CustomCNN}) y un modelo preentrenado de gran escala (\texttt{ResNet-50}) mediante Transfer Learning. Los resultados experimentales confirman la superioridad indiscutible de \texttt{ResNet-50}, la cual alcanzó una exactitud del 72.00\% y un área bajo la curva ROC (AUC-ROC) de 0.8358, superando al modelo básico en más de 18 puntos porcentuales de precisión. Adicionalmente, se integró el método de interpretabilidad visual Grad-CAM para validar las zonas de activación de la red convolucional y un análisis cualitativo de los principales modos de fallo del sistema para proponer futuras líneas de desarrollo.
-\end{abstract}
 
-% Integración de las secciones del informe desde archivos tex individuales
-\input{motivacion}
-\input{trabajos_relacionados}
-\input{metodologia}
-\input{experimentos}
-\input{resultados}
-\input{limitaciones}
+%% Para la Pregunta 2: Segmentación de Vasos (U-Net) %%
+% -     En Metodología: Detalla tu implementación de U-Net desde cero (sin bibliotecas          preexistentes). Describe también la estrategia de adaptación de dominio o preprocesamiento elegida (ej. CLAHE).  
+% -     En Experimentos: Documenta el estudio de ablación comparando decisiones arquitectónicas (profundidad, pérdida, etc.).  
+% -     En Resultados: * Muestra la evaluación en el dataset DRIVE (sensibilidad, especificidad, F1, AUC-ROC).  
+%       ** Reporta el experimento de generalización en CHASE DB1, documentando la brecha de         rendimiento.  
+%       ** En el análisis cualitativo, explica qué tipos de vasos (capilares vs. arterias) son más   difíciles de segmentar y la razón arquitectónica de esto.  
+
+
+
+%% Para la Pregunta 3: Seguridad en Construcción (YOLO) %%
+% -     En Metodología: Documenta la configuración de YOLO y el verificador de cumplimiento basado en reglas que implementaste en posprocesamiento.  
+% -     En Experimentos: Explica cómo particionaste el conjunto de prueba para el análisis de robustez ante oclusión (bajo/medio/alto).  
+% -     En Resultados: * Reporta las métricas mAP@0.5 y mAP@0.5:0.95 desglosadas por clase.  
+%           ** Muestra la demostración del verificador de cumplimiento sobre fotogramas o video y la caída de rendimiento por oclusión.  
+% - En Discusión de Limitaciones: Debes incluir una sección específica de implicaciones éticas (mínimo de una página) que aborde el balance de falsos positivos/negativos, privacidad y sesgos de datos.  
+%%%%%%%%%%%%%%%%%%%%%%%%
+
+\input{Informe/00_resumen}
+% En el abstract un resumen breve de tu enfoque y hallazgos principales.
+
+\input{Informe/01_motivacion}
+% El enunciado del problema y por qué es importante resolverlo.
+
+\input{Informe/02_trabajos_relacionados}
+% Debes incluir un mínimo de 5 referencias bibliográficas.  
+
+\input{Informe/03_metodologia}
+% La descripción de las arquitecturas, funciones de pérdida y estrategias utilizadas.
+
+\input{Informe/04_experimentos}
+% Detalles del conjunto de datos, preprocesamiento, hiperparámetros y estudios de ablación.
+
+\input{Informe/05_resultados}
+% Evaluación cuantitativa (métricas) y cualitativa.
+
+\input{Informe/06_limitaciones}
+% Análisis profundo de dónde falla el modelo y por qué, junto con las conclusiones.
 
 % Referencias bibliográficas
 \bibliographystyle{plainnat}
