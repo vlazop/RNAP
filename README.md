@@ -89,6 +89,8 @@ En el entrenamiento de problemas desbalanceados, los ejemplos fáciles de clasif
 
 Donde se configuran los hiperparámetros α = 1 y el factor de focalización γ = 2 para enfocar el gradiente en las muestras más difíciles.
 
+![Curvas de convergencia de pérdida](Informe/Imagenes/grafico_perdidas.png)
+
 ### 5. Evaluación del Modelo
 La validación se realiza de manera exhaustiva utilizando:
 *   **Exactitud (Accuracy)**
@@ -96,10 +98,20 @@ La validación se realiza de manera exhaustiva utilizando:
 *   **Área Bajo la Curva ROC (AUC-ROC)**
 *   **Matriz de Confusión** (implementada con mapas de calor de Seaborn para ilustrar falsos positivos y falsos negativos).
 
+![Comparación de Métricas](Informe/Imagenes/comparacion_metricas.png)
+
+#### Matrices de Confusión comparadas
+
+| Custom CNN (Focal Loss) | ResNet-50 (Focal Loss) | ResNet-50 (BCE) |
+| :---: | :---: | :---: |
+| ![Custom CNN CM](Informe/Imagenes/matriz_confusion_scratch.png) | ![ResNet-50 FL CM](Informe/Imagenes/matriz_confusion.png) | ![ResNet-50 BCE CM](Informe/Imagenes/matriz_confusion_bce.png) |
+
 ### 6. Interpretabilidad con Grad-CAM
 Para asegurar que el modelo está aprendiendo los patrones de las grietas y no sesgándose por elementos del fondo de la imagen, se generaron mapas de activación de la última capa convolucional de la ResNet-50 (`model_resnet.layer4[-1]`). 
 
 Esto superpone un mapa térmico (Grad-CAM) sobre la textura del neumático indicando qué partes influyen más en la decisión del modelo.
+
+![Visualización Grad-CAM](Informe/Imagenes/gradcam_resultado.png)
 
 ### 7. Ajuste de Hiperparámetros
 Se evaluó el comportamiento de la red entrenando con diferentes tasas de aprendizaje:
@@ -112,6 +124,8 @@ Se extrajeron y visualizaron 5 imágenes en las cuales el modelo de Transfer Lea
 2.  **Sombras en los Surcos:** Iluminación deficiente interpretada erróneamente como discontinuidad física o corte.
 3.  **Frontera de Decisión Incipiente:** Grietas extremadamente pequeñas que el clasificador etiqueta como normales.
 4.  **Desenfoque/Falta de Foco:** Pérdida de nitidez espacial que disminuye el contraste en las altas frecuencias de la imagen.
+
+![Muestras de Fallo](Informe/Imagenes/analisis_fallos.png)
 
 ---
 

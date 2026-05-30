@@ -9,18 +9,44 @@ Los dos modelos fueron evaluados sobre el conjunto de validación independiente 
     \begin{subfigure}[b]{0.48\textwidth}
         \centering
         \includegraphics[width=\textwidth]{Imagenes/grafico_perdidas.png}
-        \caption{Curvas de convergencia.}
+        \caption{Curvas de convergencia de pérdida.}
         \label{fig:loss_sub}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{0.48\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{Imagenes/matriz_confusion.png}
-        \caption{Matriz de confusión ResNet-50.}
-        \label{fig:cm_sub}
+        \includegraphics[width=\textwidth]{Imagenes/comparacion_metricas.png}
+        \caption{Comparación comparativa de métricas en validación.}
+        \label{fig:metrics_sub}
     \end{subfigure}
-    \caption{Comparación cuantitativa del entrenamiento y evaluación de los clasificadores de texturas.}
+    \caption{Comparación cuantitativa global de los tres experimentos entrenados.}
     \label{fig:evaluacion_cuantitativa}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \begin{subfigure}[b]{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{Imagenes/matriz_confusion_scratch.png}
+        \caption{Custom CNN (FL)}
+        \label{fig:cm_scratch}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{Imagenes/matriz_confusion.png}
+        \caption{ResNet-50 (FL)}
+        \label{fig:cm_resnet_fl}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{Imagenes/matriz_confusion_bce.png}
+        \caption{ResNet-50 (BCE)}
+        \label{fig:cm_resnet_bce}
+    \end{subfigure}
+    \caption{Matrices de confusión comparadas para los tres experimentos evaluados.}
+    \label{fig:matrices_confusion_todas}
 \end{figure}
 
 La Tabla~\ref{tab:resultados} resume el comportamiento comparativo del estudio de ablación.
