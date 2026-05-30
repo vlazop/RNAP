@@ -23,7 +23,7 @@ Para profundizar en las debilidades del clasificador ResNet-50, se extrajeron 5 
 Este trabajo demuestra la viabilidad técnica de clasificar de forma automatizada texturas de neumáticos mediante arquitecturas convolucionales y aprendizaje por transferencia. Se concluye que:
 \begin{itemize}
     \item El desbalance de datos debe ser mitigado mediante estrategias complementarias a nivel de datos (\texttt{WeightedRandomSampler}) y de pérdida (\texttt{Focal Loss}) para evitar que el gradiente ignore la clase minoritaria dañada.
-    \item La transferencia de aprendizaje con ResNet-50 es significativamente superior (72.00\% exactitud y 0.8358 AUC-ROC) al entrenamiento desde cero de arquitecturas convolucionales simples, requiriendo además menor número de épocas de optimización.
+    \item La transferencia de aprendizaje con ResNet-50 es significativamente superior (77.85\% exactitud y 0.8928 AUC-ROC en la versión con Focal Loss, y hasta 79.69\% de exactitud con la pérdida BCE) al entrenamiento desde cero de arquitecturas convolucionales simples, requiriendo además menor número de épocas de optimización.
     \item La interpretabilidad visual obtenida con Grad-CAM resulta indispensable para verificar que el clasificador enfoca su atención de forma justificada en los patrones texturales reales de desgaste y grietas físicas.
     \item Las limitaciones del sistema residen principalmente en la sensibilidad a variaciones externas de iluminación, desenfoque óptico y suciedad superficial, por lo que el despliegue comercial exige la estandarización de las cámaras y la limpieza de los neumáticos antes del escaneo.
 \end{itemize}

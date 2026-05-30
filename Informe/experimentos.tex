@@ -22,14 +22,14 @@ El procesamiento de las imágenes de entrada se estructuró a través del pipeli
 Los entrenamientos se realizaron en un entorno con soporte de GPU Nvidia CUDA. La configuración detallada de los hiperparámetros experimentales incluye:
 \begin{itemize}
     \item \textbf{Optimizador:} Se utilizó el optimizador Adam por su capacidad de adaptar las tasas de aprendizaje para cada parámetro basándose en estimaciones de momentos de primer y segundo orden.
-    \item \textbf{Tamaño del lote (Batch Size):} Establecido en 32 imágenes para equilibrar la estabilidad de la estimación del gradiente con las restricciones de memoria de GPU.
-    \item \textbf{Épocas de Entrenamiento:} El modelo básico \texttt{CustomCNN} fue entrenado durante 10 épocas, mientras que el modelo \texttt{ResNet-50} fue entrenado durante 5 épocas de ajuste fino (fine-tuning) sobre el clasificador final debido a su rápida convergencia.
-    \item \textbf{Comparación de Tasas de Aprendizaje:} Se evaluó la estabilidad y velocidad de convergencia de la arquitectura \texttt{ResNet-50} sintonizando con dos valores de learning rate diferentes: $1 \times 10^{-4}$ y $5 \times 10^{-5}$ durante un intervalo rápido de 3 épocas.
+    \item \textbf{Tamaño del lote (Batch Size):} Establecido en 64 imágenes para equilibrar la estabilidad de la estimación del gradiente con las restricciones de memoria de GPU, optimizado para una arquitectura T4 GPU.
+    \item \textbf{Épocas de Entrenamiento:} Tanto el modelo básico \texttt{CustomCNN} como las configuraciones de \texttt{ResNet-50} fueron entrenados durante 50 épocas para asegurar una convergencia profunda de los clasificadores.
+    \item \textbf{Comparación de Tasas de Aprendizaje:} Se evaluó la estabilidad y velocidad de convergencia de la arquitectura \texttt{ResNet-50} sintonizando con dos valores de learning rate diferentes: $2 \times 10^{-4}$ y $1 \times 10^{-4}$ (escalados linealmente con el tamaño de lote) durante un intervalo rápido de 5 épocas.
 \end{itemize}
 
 \subsection{Configuración del Estudio de Ablación}
 El estudio de ablación se diseñó para medir de forma aislada el impacto de dos factores clave sobre el rendimiento del clasificador:
 \begin{enumerate}
     \item \textbf{Arquitectura del Extractor de Características:} Comparando una arquitectura convolucional simple diseñada desde cero (\texttt{CustomCNN}) contra una arquitectura profunda y compleja basada en aprendizaje por transferencia (\texttt{ResNet-50}).
-    \item \textbf{Estabilidad del Optimizador frente a Tasas de Aprendizaje:} Evaluando si el modelo de transferencia es sensible o robusto frente al rango de tasas de aprendizaje adaptativo seleccionadas.
+    \item \textbf{Función de Pérdida (Loss Function):} Evaluando el impacto de mitigar el desbalance de clases comparando la pérdida clásica de entropía cruzada binaria (\texttt{BCEWithLogitsLoss}) frente a la pérdida adaptativa re-ponderada (\texttt{Focal Loss}).
 \end{enumerate}

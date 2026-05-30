@@ -33,19 +33,20 @@ La Tabla~\ref{tab:resultados} resume el comportamiento comparativo del estudio d
     \toprule
     \textbf{Modelo} & \textbf{Exactitud (Accuracy)} & \textbf{F1-Score} & \textbf{AUC-ROC} & \textbf{Mejor Loss (Entr.)} \\
     \midrule
-    Custom CNN (Desde Cero) & 54.15\% & 0.5526 & 0.6319 & 0.1371 \\
-    \textbf{ResNet-50 (Transfer Learning)} & \textbf{72.00\%} & \textbf{0.6977} & \textbf{0.8358} & \textbf{0.0624} \\
+    Custom CNN (FL) & 66.77\% & 0.6400 & 0.7713 & 0.0244 \\
+    ResNet-50 (FL) & 77.85\% & 0.7410 & \textbf{0.8928} & \textbf{0.0100} \\
+    \textbf{ResNet-50 (BCE)} & \textbf{79.69\%} & \textbf{0.7537} & 0.8794 & 0.0725 \\
     \bottomrule
   \end{tabular}
 \end{table}
 
-Los resultados cuantitativos demuestran que el modelo \texttt{ResNet-50} supera ampliamente a la red \texttt{CustomCNN} en todas las métricas de clasificación. Específicamente, el AUC-ROC alcanza un valor de $0.8358$, lo que indica una alta capacidad de separación de clases de la red residual frente al $0.6319$ de la red convolucional básica. Además, la pérdida se redujo a menos de la mitad ($0.0624$ frente a $0.1371$).
+Los resultados cuantitativos demuestran que el modelo \texttt{ResNet-50} supera ampliamente a la red \texttt{CustomCNN} en todas las métricas de clasificación. Específicamente, en la configuración con Focal Loss (FL), el AUC-ROC alcanza un valor de $0.8928$, lo que indica una alta capacidad de separación de clases de la red residual frente al $0.7713$ de la red convolucional básica. Además, la pérdida de entrenamiento se redujo considerablemente ($0.0100$ frente a $0.0244$). Por otro lado, la ablación de pérdidas muestra que el entrenamiento con \texttt{BCE} alcanza la mayor exactitud ($79.69\%$) y puntuación F1 ($0.7537$), aunque con un AUC-ROC levemente menor ($0.8794$) en comparación con \texttt{Focal Loss} ($0.8928$).
 
 \subsection{Ajuste de Hiperparámetros (Learning Rate)}
-En las pruebas rápidas de optimización de la tasa de aprendizaje para la ResNet-50 se observó que:
+En las pruebas rápidas de optimización de la tasa de aprendizaje para la ResNet-50 (con un tamaño de lote de 64, utilizando la regla de escalado lineal) se observó que:
 \begin{itemize}
-    \item Con una tasa de $1 \times 10^{-4}$ se obtuvo la convergencia más rápida y estable, consolidando una exactitud de validación del 72.00\%.
-    \item Con una tasa de $5 \times 10^{-5}$ el aprendizaje fue estable pero sensiblemente más lento, logrando una exactitud inferior en el mismo número de épocas evaluadas.
+    \item Con una tasa de $2 \times 10^{-4}$ se obtuvo la convergencia más rápida y estable, consolidando una exactitud de validación rápida del 70.77\% en solo 5 épocas.
+    \item Con una tasa de $1 \times 10^{-4}$ el aprendizaje fue estable pero más lento, logrando una exactitud inferior del 69.23\% en el mismo número de épocas evaluadas.
 \end{itemize}
 
 \subsection{Evaluación Cualitativa (Interpretabilidad)}

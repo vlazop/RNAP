@@ -103,8 +103,8 @@ Esto superpone un mapa térmico (Grad-CAM) sobre la textura del neumático indic
 
 ### 7. Ajuste de Hiperparámetros
 Se evaluó el comportamiento de la red entrenando con diferentes tasas de aprendizaje:
-*   **Learning Rates comparados:** 1e-4 vs 5e-5 usando optimizador Adam.
-*   El modelo ResNet-50 demostró un rendimiento superior y estable con un learning rate de 0.0001 (1e-4).
+*   **Learning Rates comparados:** 2e-4 vs 1e-4 usando optimizador Adam (siguiendo la regla de escalado lineal con batch=64).
+*   El modelo ResNet-50 demostró un rendimiento superior y estable con un learning rate de 0.0002 (2e-4).
 
 ### 8. Análisis Cualitativo de Fallos
 Se extrajeron y visualizaron 5 imágenes en las cuales el modelo de Transfer Learning falló en predecir correctamente la etiqueta real, permitiendo formular hipótesis sobre las causas:
@@ -117,17 +117,20 @@ Se extrajeron y visualizaron 5 imágenes en las cuales el modelo de Transfer Lea
 
 ## 📈 Resultados y Conclusiones
 
-| Métrica | Custom CNN (Desde Cero) | ResNet-50 (Transfer Learning) |
-| :--- | :--- | :--- |
-| **Exactitud (Accuracy)** | 54.15% | **72.00%** |
-| **F1-Score** | 0.5526 | **0.6977** |
-| **AUC-ROC** | 0.6319 | **0.8358** |
-| **Mejor Pérdida de Ent. (Loss)** | 0.1371 | **0.0624** |
+| Métrica | Custom CNN (FL) | ResNet-50 (FL) | ResNet-50 (BCE) |
+| :--- | :---: | :---: | :---: |
+| **Exactitud (Accuracy)** | 66.77% | 77.85% | **79.69%** |
+| **Precision** | 51.89% | 63.19% | **66.01%** |
+| **Recall** | 83.48% | **89.57%** | 87.83% |
+| **F1-Score** | 64.00% | 74.10% | **75.37%** |
+| **AUC-ROC** | 77.13% | **89.28%** | 87.94% |
+| **Mejor Pérdida (Train)** | 0.0244 | **0.0100** | 0.0725 |
 
 ### Conclusiones Principales:
-*   **Transfer Learning es Indispensable:** ResNet-50 demostró una velocidad de convergencia drásticamente mayor y una mejora en exactitud de casi 18 puntos porcentuales en comparación con el modelo personalizado.
-*   **Mitigación Efectiva:** La combinación de `Focal Loss` y `WeightedRandomSampler` permitió al modelo resolver el problema del desbalance de datos sin caer en predicciones sesgadas hacia la clase mayoritaria.
-*   **Validación de Criterio:** Mediante las imágenes de Grad-CAM se corroboró que el modelo enfoca su atención principalmente en los surcos y deformidades de las texturas de las llantas.
+*   **Transfer Learning es Indispensable:** ResNet-50 demostró una velocidad de convergencia drásticamente mayor y una mejora en exactitud de casi 13 puntos porcentuales en comparación con el modelo personalizado.
+*   **Mitigación Efectiva:** La combinación de `WeightedRandomSampler` con la estrategia de pérdidas balanceó de forma robusta el aprendizaje, logrando recalls elevados de hasta **89.57%** en la detección de defectos.
+*   **Estudio de Ablación de Pérdida:** Aunque BCE logró una exactitud marginalmente superior (79.69%), Focal Loss demostró un mejor AUC-ROC (89.28%), confirmando una separación de clases probabilística más robusta frente al desequilibrio de datos.
+*   **Validación de Criterio (Interpretabilidad):** Mediante Grad-CAM se corroboró que el modelo enfoca su atención principalmente en las fisuras y deformidades texturales de las llantas, descartando atajos contextuales del fondo.
 
 ---
 
